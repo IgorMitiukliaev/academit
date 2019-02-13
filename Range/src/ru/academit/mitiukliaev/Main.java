@@ -4,10 +4,10 @@ import ru.academit.mitiukliaev.range.Range;
 
 public class Main {
     public static void main(String[] args) {
-        Range range_1 = new Range(-5, 4);
-        Range range_2 = new Range(-9, 5);
+        Range range1 = new Range(-5, 4);
+        Range range2 = new Range(4, 5);
 
-        Range rangeIntersection = range_1.getIntersection(range_2);
+        Range rangeIntersection = range1.getIntersection(range2);
         System.out.println("Intersection");
         if (rangeIntersection == null) {
             System.out.println("Intersection is void");
@@ -16,14 +16,14 @@ public class Main {
             System.out.println(rangeIntersection.getTo());
         }
 
-        Range[] rangeUnion = range_1.getUnion(range_2);
+        Range[] rangeUnion = range1.getUnion(range2);
         for (int i = 0; i < rangeUnion.length; i++) {
             System.out.printf("Union part %d%n", i + 1);
             System.out.println(rangeUnion[i].getFrom());
             System.out.println(rangeUnion[i].getTo());
         }
 
-        Range[] rangeDifference = range_1.getDifference(range_2);
+        Range[] rangeDifference = range1.getDifference(range2);
         if (rangeDifference == null) {
             System.out.println("Difference is void");
         } else {

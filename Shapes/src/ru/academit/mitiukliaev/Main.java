@@ -6,15 +6,15 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        Shape[] arrayShapes = new Shape[7];
-
-        arrayShapes[0] = new Square(20);
-        arrayShapes[1] = new Circle(25);
-        arrayShapes[2] = new Triangle(0, 0, 10, 0, 0, 20);
-        arrayShapes[3] = new Rectangle(20, 5);
-        arrayShapes[4] = new Triangle(0, 0, 20, 0, 0, 10);
-        arrayShapes[5] = new Triangle(0, 0, 0, 100, 100, 0);
-        arrayShapes[6] = new Circle(5);
+        Shape[] arrayShapes = new Shape[]{
+                new Square(20),
+                new Circle(25),
+                new Triangle(0, 0, 10, 0, 0, 20),
+                new Rectangle(20, 5),
+                new Triangle(0, 0, 20, 0, 0, 10),
+                new Triangle(0, 0, 0, 100, 100, 0),
+                new Circle(5)
+        };
 
         Arrays.sort(arrayShapes, new AreaComparator());
         for (Shape e : arrayShapes) {

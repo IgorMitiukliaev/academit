@@ -1,6 +1,6 @@
 package ru.academit.mitiukliaev.shape;
 
-public class Circle implements Shape{
+public class Circle implements Shape {
     private double radius;
 
     public Circle(double radius) {
@@ -8,11 +8,11 @@ public class Circle implements Shape{
     }
 
     public double getWidth() {
-        return (double) 2 * radius;
+        return 2 * radius;
     }
 
     public double getHeight() {
-        return (double) 2 * radius;
+        return 2 * radius;
     }
 
     public double getArea() {
@@ -20,18 +20,31 @@ public class Circle implements Shape{
     }
 
     public double getPerimeter() {
-        return (double) 2 * Math.PI * radius;
+        return 2 * Math.PI * radius;
     }
 
     @Override
-    public int compareTo(Shape shape) {
-        double epsilon = 1e-5;
-        if (this.getArea() - shape.getArea() > epsilon) {
-            return 1;
-        } else if (this.getArea() - shape.getArea() < epsilon) {
-            return -1;
-        } else {
-            return 0;
+    public String toString() {
+        return this.getClass().getSimpleName() + " (R=" + this.radius + ")";
+    }
+
+    @Override
+    public boolean equals(Object shape) {
+        if (shape == this) {
+            return true;
         }
+        if (shape == null || shape.getClass() != this.getClass()) {
+            return false;
+        }
+        Circle circle = (Circle) shape;
+        return radius == circle.radius;
+    }
+
+    @Override
+    public int hashCode(){
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(radius);
+        return hash;
     }
 }

@@ -20,18 +20,37 @@ public class Square implements Shape {
     }
 
     public double getPerimeter() {
-        return (double) 4 * sideLength;
+        return 4 * sideLength;
     }
 
     @Override
-    public int compareTo(Shape shape) {
-        double epsilon = 1e-5;
-        if (this.getArea() - shape.getArea() > epsilon) {
-            return 1;
-        } else if (this.getArea() - shape.getArea() < epsilon) {
-            return -1;
-        } else {
-            return 0;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+                .append(" (")
+                .append("W=" + this.sideLength + ", ")
+                .append("H=" + this.sideLength)
+                .append(")");
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object shape) {
+        if (shape == this) {
+            return true;
         }
+        if (shape == null || shape.getClass() != this.getClass()) {
+            return false;
+        }
+        Square square = (Square) shape;
+        return sideLength == square.sideLength;
+    }
+
+    @Override
+    public int hashCode(){
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(sideLength);
+        return hash;
     }
 }

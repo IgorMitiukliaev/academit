@@ -22,17 +22,38 @@ public class Rectangle implements Shape {
     }
 
     public double getPerimeter() {
-        return (double) 2 * (width + height);
+        return 2 * (width + height);
     }
+
     @Override
-    public int compareTo(Shape shape) {
-        double epsilon = 1e-5;
-        if (this.getArea() - shape.getArea() > epsilon) {
-            return 1;
-        } else if (this.getArea() - shape.getArea() < epsilon) {
-            return -1;
-        } else {
-            return 0;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+                .append(" (")
+                .append("W=" + this.width + ", ")
+                .append("H=" + this.height)
+                .append(")");
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object shape) {
+        if (shape == this) {
+            return true;
         }
+        if (shape == null || shape.getClass() != this.getClass()) {
+            return false;
+        }
+        Rectangle rectangle = (Rectangle) shape;
+        return height == rectangle.height && width == rectangle.width;
+    }
+
+    @Override
+    public int hashCode(){
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(width);
+        hash = prime * hash + Double.hashCode(height);
+        return hash;
     }
 }

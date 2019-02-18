@@ -38,8 +38,9 @@ public class Range {
         double toIntersection = Math.min(to, range.to);
         if (fromIntersection < toIntersection) {
             return new Range(fromIntersection, toIntersection);
-        } else
+        } else {
             return null;
+        }
     }
 
     public Range[] getUnion(Range range) {

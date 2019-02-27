@@ -1,33 +1,37 @@
 package ru.academit.mitiukliaev.shape;
 
 public class Square implements Shape {
-    private double SideLength;
+    private double sideLength;
 
     public Square(double SideLength) {
-        this.SideLength = SideLength;
+        this.sideLength = SideLength;
     }
 
+    @Override
     public double getWidth() {
-        return SideLength;
+        return sideLength;
     }
 
+    @Override
     public double getHeight() {
-        return SideLength;
+        return sideLength;
     }
 
+    @Override
     public double getArea() {
-        return SideLength * SideLength;
+        return sideLength * sideLength;
     }
 
+    @Override
     public double getPerimeter() {
-        return 4 * SideLength;
+        return 4 * sideLength;
     }
 
     @Override
     public String toString() {
         String name = this.getClass().getSimpleName() + " (";
-        name += "W=" + this.SideLength + ", ";
-        name += "H=" + this.SideLength + ")";
+        name += "W=" + this.sideLength + ", ";
+        name += "H=" + this.sideLength + ")";
         return name;
     }
 
@@ -40,11 +44,11 @@ public class Square implements Shape {
             return false;
         }
         Square square = (Square) o;
-        return SideLength == square.SideLength;
+        return sideLength == square.sideLength;
     }
 
     @Override
     public int hashCode() {
-        return Double.hashCode(SideLength);
+        return Double.hashCode(sideLength);
     }
 }

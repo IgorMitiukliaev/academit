@@ -17,7 +17,7 @@ public class Triangle implements Shape {
         this.y3 = y3;
     }
 
-    private double sideLength(double x1, double x2, double y1, double y2) {
+    private static double getSideLength(double x1, double y1, double x2, double y2) {
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
@@ -34,30 +34,27 @@ public class Triangle implements Shape {
     }
 
     public double getPerimeter() {
-        return sideLength(x1, x3, y1, y3) + sideLength(x1, x2, y1, y2) + sideLength(x2, x3, y2, y3);
+        return getSideLength(x1, y1, x3, y3) + getSideLength(x1, y1, x2, y2) + getSideLength(x2, y2, x3, y3);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-                .append(" (")
-                .append("X1=" + this.x1 + ", " + "Y1=" + this.y1 + ", ")
-                .append("X2=" + this.x2 + ", " + "Y2=" + this.y2 + ", ")
-                .append("X3=" + this.x3 + ", " + "Y3=" + this.y3)
-                .append(")");
-        return sb.toString();
+        String name = this.getClass().getSimpleName() + " (";
+        name += "X1=" + this.x1 + ", " + "Y1=" + this.y1 + ", ";
+        name += "X2=" + this.x2 + ", " + "Y2=" + this.y2 + ", ";
+        name += "X3=" + this.x3 + ", " + "Y3=" + this.y3 + ")";
+        return name;
     }
 
     @Override
-    public boolean equals(Object shape) {
-        if (shape == this) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if (shape == null || shape.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        Triangle triangle = (Triangle) shape;
+        Triangle triangle = (Triangle) o;
         return x1 == triangle.x1 && x2 == triangle.x2 && x3 == triangle.x3 && y1 == triangle.y1 && y2 == triangle.y2 && y3 == triangle.y3;
     }
 

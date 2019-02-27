@@ -1,56 +1,50 @@
 package ru.academit.mitiukliaev.shape;
 
 public class Square implements Shape {
-    private double sideLength;
+    private double SideLength;
 
-    public Square(double sideLength) {
-        this.sideLength = sideLength;
+    public Square(double SideLength) {
+        this.SideLength = SideLength;
     }
 
     public double getWidth() {
-        return sideLength;
+        return SideLength;
     }
 
     public double getHeight() {
-        return sideLength;
+        return SideLength;
     }
 
     public double getArea() {
-        return sideLength * sideLength;
+        return SideLength * SideLength;
     }
 
     public double getPerimeter() {
-        return 4 * sideLength;
+        return 4 * SideLength;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-                .append(" (")
-                .append("W=" + this.sideLength + ", ")
-                .append("H=" + this.sideLength)
-                .append(")");
-        return sb.toString();
+        String name = this.getClass().getSimpleName() + " (";
+        name += "W=" + this.SideLength + ", ";
+        name += "H=" + this.SideLength + ")";
+        return name;
     }
 
     @Override
-    public boolean equals(Object shape) {
-        if (shape == this) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if (shape == null || shape.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        Square square = (Square) shape;
-        return sideLength == square.sideLength;
+        Square square = (Square) o;
+        return SideLength == square.SideLength;
     }
 
     @Override
-    public int hashCode(){
-        final int prime = 37;
-        int hash = 1;
-        hash = prime * hash + Double.hashCode(sideLength);
-        return hash;
+    public int hashCode() {
+        return Double.hashCode(SideLength);
     }
 }

@@ -27,24 +27,21 @@ public class Rectangle implements Shape {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-                .append(" (")
-                .append("W=" + this.width + ", ")
-                .append("H=" + this.height)
-                .append(")");
-        return sb.toString();
+        String name = this.getClass().getSimpleName() + " (";
+        name += "W=" + this.width + ", ";
+        name += "H=" + this.height + ")";
+        return name;
     }
 
     @Override
-    public boolean equals(Object shape) {
-        if (shape == this) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if (shape == null || shape.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        Rectangle rectangle = (Rectangle) shape;
+        Rectangle rectangle = (Rectangle) o;
         return height == rectangle.height && width == rectangle.width;
     }
 

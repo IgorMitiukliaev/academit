@@ -3,75 +3,52 @@ package ru.academit.mitiukliaev.vector;
 import java.util.Arrays;
 
 public class Vector {
-    private double[] vectorCoordinates;
-
+    private double[] coordinates;
 
     public Vector(int size) {
-        try {
-            if (size <= 0) {
-                throw new IllegalArgumentException("Size must be positive!");
-            }
-            vectorCoordinates = new double[size];
-        } catch (IllegalArgumentException e) {
-            vectorCoordinates = null;
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive!");
         }
+        this.coordinates = new double[size];
     }
 
     public Vector(Vector source) {
         int size = source.getSize();
-        this.vectorCoordinates = new double[size];
-        this.vectorCoordinates = Arrays.copyOf(source.vectorCoordinates, size);
+        this.coordinates = Arrays.copyOf(source.coordinates, size);
     }
 
     public Vector(double... coordinates) {
-        vectorCoordinates = Arrays.copyOf(coordinates, coordinates.length);
+        this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
     }
 
     public Vector(int size, double... coordinates) {
-        try {
-            if (size <= 0) {
-                throw new IllegalArgumentException("Size must be positive!");
-            }
-            vectorCoordinates = Arrays.copyOf(coordinates, size);
-        } catch (IllegalArgumentException e) {
-            vectorCoordinates = null;
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive!");
         }
+        this.coordinates = Arrays.copyOf(coordinates, size);
     }
 
     public int getSize() {
-        try {
-            if (!(this instanceof Vector)) {
-                throw new ClassCastException("Not in class");
-            }
-            if (this.equals(null)) {
-                throw new NullPointerException("Null value encountered!");
-            }
-            return vectorCoordinates.length;
-        } catch (Throwable e) {
-            System.out.println(e);
-            return 0;
-        }
+        return this.coordinates.length;
     }
-
 
     public double getCoordinate(int i) {
         try {
             if (i < 0 || i >= this.getSize()) {
                 throw new IndexOutOfBoundsException("Index out of range");
             }
-            return vectorCoordinates[i];
+            return this.coordinates[i];
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
-
 
     public void setCoordinate(int i, double value) {
         try {
             if (i < 0 || i >= this.getSize()) {
                 throw new IndexOutOfBoundsException("Index out of range");
             }
-            this.vectorCoordinates[i] = value;
+            this.coordinates[i] = value;
         } catch (IndexOutOfBoundsException e) {
             System.out.println(e);
         }
@@ -82,27 +59,29 @@ public class Vector {
         int sizeThis = this.getSize();
         int sizeVector = vector.getSize();
         int size = Math.max(this.getSize(), vector.getSize());
-        Vector newVector = new Vector(size);
+        double[] newCoordinates = new double[size];
         for (int i = 0; i < size; i++) {
-            newVector.vectorCoordinates[i] = (i < sizeThis ? this.vectorCoordinates[i] : 0) + (i < sizeVector ? vector.vectorCoordinates[i] : 0);
+            newCoordinates[i] = (i < sizeThis ? this.coordinates[i] : 0) + (i < sizeVector ? vector.coordinates[i] : 0);
         }
-        return newVector;
+        this.coordinates = Arrays.copyOf(newCoordinates, size);
+        return this;
     }
 
     public Vector subtract(Vector vector) {
         int sizeThis = this.getSize();
         int sizeVector = vector.getSize();
         int size = Math.max(this.getSize(), vector.getSize());
-        Vector newVector = new Vector(size);
+        double[] newCoordinates = new double[size];
         for (int i = 0; i < size; i++) {
-            newVector.vectorCoordinates[i] = (i < sizeThis ? this.vectorCoordinates[i] : 0) - (i < sizeVector ? vector.vectorCoordinates[i] : 0);
+            newCoordinates[i] = (i < sizeThis ? this.coordinates[i] : 0) - (i < sizeVector ? vector.coordinates[i] : 0);
         }
-        return newVector;
+        this.coordinates = Arrays.copyOf(newCoordinates, size);
+        return this;
     }
 
     public Vector multiplyScalar(double value) {
         for (int i = 0; i < this.getSize(); i++) {
-            this.vectorCoordinates[i] *= value;
+            this.coordinates[i] *= value;
         }
         return this;
     }
@@ -114,16 +93,17 @@ public class Vector {
 
     public double getLength() {
         double length = 0;
-        for (double e : vectorCoordinates) {
+        for (double e : coordinates) {
             length += e * e;
         }
         return Math.sqrt(length);
     }
 
-    public static Vector addVector(Vector vector1, Vector vector2) {
-        return vector1.add(vector2);
-    }
-
+    /*
+        public static Vector addVector(Vector vector1, Vector vector2) {
+            return vector1.add(vector2);
+        }
+    */
     public static Vector subtractVector(Vector vector1, Vector vector2) {
         return vector1.subtract(vector2);
     }
@@ -132,7 +112,7 @@ public class Vector {
         int size = Math.min(vector1.getSize(), vector2.getSize());
         double result = 0;
         for (int i = 0; i < size; i++) {
-            result += vector1.vectorCoordinates[i] * vector2.vectorCoordinates[i];
+            result += vector1.coordinates[i] * vector2.coordinates[i];
         }
         return result;
     }
@@ -145,11 +125,11 @@ public class Vector {
             }
             StringBuilder sb = new StringBuilder();
             sb.append("{");
-            for (int i = 0; i < vectorCoordinates.length - 1; i++) {
-                sb.append(this.vectorCoordinates[i]);
+            for (int i = 0; i < coordinates.length - 1; i++) {
+                sb.append(this.coordinates[i]);
                 sb.append(", ");
             }
-            sb.append(this.vectorCoordinates[vectorCoordinates.length - 1]);
+            sb.append(this.coordinates[coordinates.length - 1]);
             sb.append("}");
             return sb.toString();
         } catch (IllegalArgumentException e) {
@@ -168,11 +148,11 @@ public class Vector {
             return false;
         }
         Vector vector = (Vector) o;
-        return Arrays.equals(this.vectorCoordinates, (vector.vectorCoordinates));
+        return Arrays.equals(this.coordinates, (vector.coordinates));
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this.vectorCoordinates);
+        return Arrays.hashCode(this.coordinates);
     }
 }

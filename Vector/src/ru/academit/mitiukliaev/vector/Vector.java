@@ -18,12 +18,18 @@ public class Vector {
     }
 
     public Vector(double... coordinates) {
+        if (coordinates.length == 0) {
+            throw new IllegalArgumentException("Input array is void");
+        }
         this.coordinates = Arrays.copyOf(coordinates, coordinates.length);
     }
 
     public Vector(int size, double... coordinates) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be positive!");
+        }
+        if (coordinates.length == 0) {
+            throw new IllegalArgumentException("Input array is void");
         }
         this.coordinates = Arrays.copyOf(coordinates, size);
     }
@@ -32,27 +38,31 @@ public class Vector {
         return this.coordinates.length;
     }
 
-    public double getCoordinate(int i) {
-        try {
-            if (i < 0 || i >= this.getSize()) {
-                throw new IndexOutOfBoundsException("Index out of range");
-            }
-            return this.coordinates[i];
-        } catch (IndexOutOfBoundsException e) {
-            return 0;
+    public Vector setSize(int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive!");
         }
+        double[] newCoordinates = new double[size];
+        int indexCopyRange = Math.min(this.coordinates.length, size);
+        for (int i = 0; i < indexCopyRange; i++) {
+            newCoordinates[i] = this.coordinates[i];
+        }
+        this.coordinates = Arrays.copyOf(newCoordinates, size);
+        return this;
+    }
+
+    public double getCoordinate(int i) {
+        if (i < 0 || !(i < this.getSize())) {
+            throw new IndexOutOfBoundsException("Index out of range");
+        }
+        return this.coordinates[i];
     }
 
     public void setCoordinate(int i, double value) {
-        try {
-            if (i < 0 || i >= this.getSize()) {
-                throw new IndexOutOfBoundsException("Index out of range");
-            }
-            this.coordinates[i] = value;
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println(e);
+        if (i < 0 || i >= this.getSize()) {
+            throw new IndexOutOfBoundsException("Index out of range");
         }
-
+        this.coordinates[i] = value;
     }
 
     public Vector add(Vector vector) {
@@ -93,19 +103,21 @@ public class Vector {
 
     public double getLength() {
         double length = 0;
-        for (double e : coordinates) {
+        for (double e : this.coordinates) {
             length += e * e;
         }
         return Math.sqrt(length);
     }
 
-    /*
-        public static Vector addVector(Vector vector1, Vector vector2) {
-            return vector1.add(vector2);
-        }
-    */
+
+    public static Vector addVector(Vector vector1, Vector vector2) {
+        Vector result = new Vector(vector1);
+        return result.add(vector2);
+    }
+
     public static Vector subtractVector(Vector vector1, Vector vector2) {
-        return vector1.subtract(vector2);
+        Vector result = new Vector(vector1);
+        return result.subtract(vector2);
     }
 
     public static double multiplyVector(Vector vector1, Vector vector2) {
@@ -119,24 +131,18 @@ public class Vector {
 
     @Override
     public String toString() {
-        try {
-            if (this.getSize() <= 0) {
-                throw new IllegalArgumentException("null value encountered!");
-            }
-            StringBuilder sb = new StringBuilder();
-            sb.append("{");
-            for (int i = 0; i < coordinates.length - 1; i++) {
-                sb.append(this.coordinates[i]);
-                sb.append(", ");
-            }
-            sb.append(this.coordinates[coordinates.length - 1]);
-            sb.append("}");
-            return sb.toString();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e);
-            return null;
+        if (this.getSize() <= 0) {
+            throw new IllegalArgumentException("null value encountered!");
         }
-
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < coordinates.length - 1; i++) {
+            sb.append(this.coordinates[i]);
+            sb.append(", ");
+        }
+        sb.append(this.coordinates[coordinates.length - 1]);
+        sb.append("}");
+        return sb.toString();
     }
 
     @Override

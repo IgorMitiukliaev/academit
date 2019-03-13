@@ -15,7 +15,7 @@ public class ReadListFromFile {
             }
             System.out.println(fileData);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }

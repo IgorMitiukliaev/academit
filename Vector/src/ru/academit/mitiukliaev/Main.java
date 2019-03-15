@@ -39,7 +39,7 @@ public class Main {
         System.out.println("vector4 = " + vector4);
         System.out.println();
 
-        System.out.println("addVector(vector4,vector5) = " + addVector(vector4, vector5));
+        System.out.println("subtractVector(vector4,vector5) = " + subtractVector(vector4, vector5));
         System.out.println("vector4 = " + vector4);
         System.out.println("vector5 = " + vector5);
         System.out.println();
@@ -53,7 +53,7 @@ public class Main {
         Vector vector6 = new Vector(new double[]{1, 1});
         System.out.println("vector6 = " + vector6);
         System.out.println("vector6 length = " + vector6.getLength());
-        System.out.println("multiplyVector(vector3, vector6) = " + multiplyVector(vector3, vector6));
+        System.out.println("scalar product of (vector3, vector6) = " + productScalar(vector3, vector6));
 
         System.out.println("(vector2 = vector1) = " + vector2.equals(vector1));
         System.out.println("(vector2 = Vector(vector2)) = " + vector2.equals(new Vector(vector2)));

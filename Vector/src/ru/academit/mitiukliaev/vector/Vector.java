@@ -39,12 +39,10 @@ public class Vector {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be positive!");
         }
-        if (size == this.getSize()) {
-            return this;
-        } else {
+        if (size != this.getSize()) {
             this.coordinates = Arrays.copyOf(this.coordinates, size);
-            return this;
         }
+        return this;
     }
 
     public double getCoordinate(int i) {
@@ -62,35 +60,23 @@ public class Vector {
     }
 
     public Vector add(Vector vector) {
-        int sizeThis = this.getSize();
         int sizeVector = vector.getSize();
-        if (sizeThis >= sizeVector) {
-            for (int i = 0; i < sizeThis; i++) {
-                this.coordinates[i] += (i < sizeVector ? vector.coordinates[i] : 0);
-            }
-        } else {
-            double[] newCoordinates = new double[sizeVector];
-            for (int i = 0; i < sizeVector; i++) {
-                newCoordinates[i] = (i < sizeThis ? this.coordinates[i] : 0) + vector.coordinates[i];
-            }
-            this.coordinates = Arrays.copyOf(newCoordinates, sizeVector);
+        if (sizeVector > this.getSize()) {
+            this.coordinates = Arrays.copyOf(this.coordinates, sizeVector);
+        }
+        for (int i = 0; i < sizeVector; i++) {
+            this.coordinates[i] += vector.coordinates[i];
         }
         return this;
     }
 
     public Vector subtract(Vector vector) {
-        int sizeThis = this.getSize();
         int sizeVector = vector.getSize();
-        if (sizeThis >= sizeVector) {
-            for (int i = 0; i < sizeThis; i++) {
-                this.coordinates[i] -= (i < sizeVector ? vector.coordinates[i] : 0);
-            }
-        } else {
-            double[] newCoordinates = new double[sizeVector];
-            for (int i = 0; i < sizeVector; i++) {
-                newCoordinates[i] = (i < sizeThis ? this.coordinates[i] : 0) - vector.coordinates[i];
-            }
-            this.coordinates = Arrays.copyOf(newCoordinates, sizeVector);
+        if (sizeVector > this.getSize()) {
+            this.coordinates = Arrays.copyOf(this.coordinates, sizeVector);
+        }
+        for (int i = 0; i < sizeVector; i++) {
+            this.coordinates[i] -= vector.coordinates[i];
         }
         return this;
     }
@@ -137,24 +123,17 @@ public class Vector {
 
     @Override
     public String toString() {
-        if (this.getSize() <= 0) {
-            throw new IllegalArgumentException("null value encountered!");
-        }
-        String string = Arrays.toString(this.coordinates);
-        string = string.replace("[", "{ ");
-        string = string.replace("]", " }");
-        return string;
-        /*
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append("{ ");
+
         for (int i = 0; i < coordinates.length - 1; i++) {
             sb.append(this.coordinates[i]);
             sb.append(", ");
         }
+
         sb.append(this.coordinates[coordinates.length - 1]);
-        sb.append("}");
+        sb.append(" }");
         return sb.toString();
-        */
     }
 
     @Override

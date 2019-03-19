@@ -77,7 +77,7 @@ public class LinkedList<T> {
 
         int i = 0;
         Node<T> pointer = head;
-        while (i < index-1) {
+        while (i < index - 1) {
             pointer = pointer.getNext();
             ++i;
         }

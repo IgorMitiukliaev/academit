@@ -5,24 +5,15 @@ import ru.academit.mitiukliaev.list.Node;
 
 public class Main {
     public static void main(String[] args) {
-        String a = "1";
-        Node<String> first = new Node<>(a);
-        System.out.println(first);
-        System.out.println(first.hashCode());
+        LinkedList<String> list = new LinkedList<>();
+        for (int i = 1; i < 10; i++) {
+            list.appendValue(String.valueOf(i));
+        }
 
-        LinkedList<String> list = new LinkedList<>(first);
-        a = "2";
-        list.appendValue(a);
-        a = "3";
-        list.appendValue(a);
-        a = "4";
-        list.appendValue(a);
-        a = "5";
-        list.appendValue(a);
         System.out.println("getCount = " + list.getCount());
         System.out.println(list);
 
-        int index = 3;
+        int index = 5;
         list.insertIndexValue(index, "new at index = " + index);
         System.out.println(list);
         System.out.println("deleteIndex(" + index + ") = " + list.deleteIndex(index));

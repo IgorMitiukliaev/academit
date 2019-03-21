@@ -14,8 +14,24 @@ public class LinkedList<T> {
         count = 1;
     }
 
+    public LinkedList(T data) {
+        this.head = new Node<>(data);
+        count = 1;
+    }
+
+    //поиск нужного элемента
+    private Node<T> setPointer(int index) {
+        Node<T> pointer = head;
+        int i = 0;
+        while (i < index - 1) {
+            pointer = pointer.getNext();
+            ++i;
+        }
+        return pointer;
+    }
+
     //вставка элемента в начало
-    public void appendValue(T value) {
+    public void insertValue(T value) {
         Node<T> newNode = new Node<>(value);
         newNode.setNext(this.head);
         head = newNode;
@@ -29,6 +45,9 @@ public class LinkedList<T> {
 
     //получение значения первого элемента
     public T getHeadValue() {
+        if (head == null) {
+            throw new NullPointerException("The list is null");
+        }
         return head.getData();
     }
 
@@ -37,30 +56,15 @@ public class LinkedList<T> {
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        int i = 0;
-        Node<T> pointer = head;
-        while (i < index) {
-            pointer = pointer.getNext();
-            ++i;
-        }
-        return pointer.getData();
+        return setPointer(index).getData();
     }
 
     //изменение значения по указанному индексу.
     public T setIndexValue(int index, T value) {
-        if (value == null) {
-            throw new NullPointerException("The value is null");
-        }
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        int i = 0;
-        Node<T> pointer = head;
-        while (i < index) {
-            pointer = pointer.getNext();
-            ++i;
-        }
-        return pointer.setData(value);
+        return setPointer(index).setData(value);
     }
 
     //удаление элемента по индексу, пусть выдает значение элемента
@@ -75,12 +79,7 @@ public class LinkedList<T> {
             return tmp.getData();
         }
 
-        int i = 0;
-        Node<T> pointer = head;
-        while (i < index - 1) {
-            pointer = pointer.getNext();
-            ++i;
-        }
+        Node<T> pointer = setPointer(index - 1);
         Node<T> tmp = pointer.getNext();
         pointer.setNext(tmp.getNext());
         --count;
@@ -97,16 +96,11 @@ public class LinkedList<T> {
         }
 
         if (index == 0) {
-            appendValue(value);
+            insertValue(value);
             return;
         }
 
-        int i = 0;
-        Node<T> pointer = head;
-        while (i < index - 1) {
-            pointer = pointer.getNext();
-            ++i;
-        }
+        Node<T> pointer = setPointer(index - 1);
         Node<T> newNode = new Node<>(value);
         newNode.setNext(pointer.getNext());
         pointer.setNext(newNode);
@@ -147,8 +141,14 @@ public class LinkedList<T> {
 
     //разворот списка за линейное время
     public void reverse() {
+        if (head == null) {
+            throw new NullPointerException("The list is void");
+        }
         Node<T> first = head;
         Node<T> second = head.getNext();
+        if (second == null) {
+            return;
+        }
         Node<T> third = second.getNext();
 
         first.setNext(null);
@@ -170,18 +170,17 @@ public class LinkedList<T> {
     //копирование списка
     public LinkedList<T> copyList() {
         LinkedList<T> newList = new LinkedList<>();
-
-        Node<T> pointer = head;
-        while (pointer != null) {
-            newList.appendValue(pointer.getData());
-            pointer = pointer.getNext();
+        for (int i = 0; i < this.getCount(); i++) {
+            newList.insertIndexValue(0, this.getIndexValue(i));
         }
-        newList.reverse();
         return newList;
     }
 
     @Override
     public String toString() {
+        if (head == null) {
+            throw new NullPointerException("The list is void");
+        }
         StringBuilder sb = new StringBuilder();
         Node<T> pointer = head;
         sb.append("(");

@@ -23,7 +23,8 @@ public class Node<T> {
     }
 
     public T setData(T data) {
-        T tmp = this.data;
+        T tmp;
+        tmp = this.data;
         this.data = data;
         return tmp;
     }

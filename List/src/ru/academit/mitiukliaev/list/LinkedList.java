@@ -9,25 +9,25 @@ public class LinkedList<T> {
         count = 0;
     }
 
-    public LinkedList(Node<T> data) {
-        this.head = data;
-        count = 1;
-    }
-
     public LinkedList(T data) {
         this.head = new Node<>(data);
         count = 1;
     }
 
     //поиск нужного элемента
-    private Node<T> setPointer(int index) {
-        Node<T> pointer = head;
-        int i = 0;
-        while (i < index - 1) {
-            pointer = pointer.getNext();
-            ++i;
+    private Node<T> setCurrentNode(int index) {
+        if (head != null) {
+            Node<T> currentNode = head;
+            int i = 0;
+            while (i < index) {
+                currentNode = currentNode.getNext();
+                ++i;
+            }
+            return currentNode;
         }
-        return pointer;
+        this.head = new Node<T>();
+        Node<T> currentNode = head;
+        return currentNode;
     }
 
     //вставка элемента в начало
@@ -45,9 +45,6 @@ public class LinkedList<T> {
 
     //получение значения первого элемента
     public T getHeadValue() {
-        if (head == null) {
-            throw new NullPointerException("The list is null");
-        }
         return head.getData();
     }
 
@@ -56,7 +53,7 @@ public class LinkedList<T> {
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return setPointer(index).getData();
+        return setCurrentNode(index).getData();
     }
 
     //изменение значения по указанному индексу.
@@ -64,11 +61,14 @@ public class LinkedList<T> {
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return setPointer(index).setData(value);
+        return setCurrentNode(index).setData(value);
     }
 
     //удаление элемента по индексу, пусть выдает значение элемента
     public T deleteIndex(int index) {
+        if (head == null) {
+            throw new IllegalArgumentException("The list is void, nothing to delete");
+        }
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
@@ -79,18 +79,15 @@ public class LinkedList<T> {
             return tmp.getData();
         }
 
-        Node<T> pointer = setPointer(index - 1);
-        Node<T> tmp = pointer.getNext();
-        pointer.setNext(tmp.getNext());
+        Node<T> currentNode = setCurrentNode(index - 1);
+        Node<T> tmp = currentNode.getNext();
+        currentNode.setNext(tmp.getNext());
         --count;
         return tmp.getData();
     }
 
     //вставка элемента по индексу
     public void insertIndexValue(int index, T value) {
-        if (value == null) {
-            throw new NullPointerException("The value is null");
-        }
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
@@ -100,17 +97,17 @@ public class LinkedList<T> {
             return;
         }
 
-        Node<T> pointer = setPointer(index - 1);
+        Node<T> currentNode = setCurrentNode(index - 1);
         Node<T> newNode = new Node<>(value);
-        newNode.setNext(pointer.getNext());
-        pointer.setNext(newNode);
+        newNode.setNext(currentNode.getNext());
+        currentNode.setNext(newNode);
         ++count;
     }
 
     //удаление узла по значению, пусть выдает true, если элемент был удален
     public boolean deleteValue(T value) {
-        if (value == null) {
-            throw new NullPointerException("The value is null");
+        if (head == null) {
+            throw new IllegalArgumentException("The list is void, nothing to delete");
         }
 
         if (head.getData().equals(value)) {
@@ -119,20 +116,23 @@ public class LinkedList<T> {
             return true;
         }
 
-        Node<T> pointer = head;
-        while (pointer.getNext() != null) {
-            if (pointer.getNext().getData().equals(value)) {
-                pointer.setNext(pointer.getNext().getNext());
+        Node<T> currentNode = head;
+        while (currentNode.getNext() != null) {
+            if (currentNode.getNext().getData().equals(value)) {
+                currentNode.setNext(currentNode.getNext().getNext());
                 --count;
                 return true;
             }
-            pointer = pointer.getNext();
+            currentNode = currentNode.getNext();
         }
         return false;
     }
 
     //удаление первого элемента, пусть выдает значение элемента
     public T deleteHead() {
+        if (head == null) {
+            throw new IllegalArgumentException("The list is void, nothing to delete");
+        }
         T tmp = head.getData();
         head = head.getNext();
         --count;
@@ -142,8 +142,9 @@ public class LinkedList<T> {
     //разворот списка за линейное время
     public void reverse() {
         if (head == null) {
-            throw new NullPointerException("The list is void");
+            return;
         }
+
         Node<T> first = head;
         Node<T> second = head.getNext();
         if (second == null) {
@@ -168,27 +169,43 @@ public class LinkedList<T> {
     }
 
     //копирование списка
-    public LinkedList<T> copyList() {
+    public LinkedList<T> copy() {
         LinkedList<T> newList = new LinkedList<>();
-        for (int i = 0; i < this.getCount(); i++) {
-            newList.insertIndexValue(0, this.getIndexValue(i));
+        if (this.head == null) {
+            return newList;
         }
+        newList.insertIndexValue(0, this.head.getData());
+        Node<T> newListNode = new Node<>();
+        newList.head.setNext(newListNode);
+        Node<T> tempNode = this.head.getNext();
+        for (int i = 1; i < this.getCount(); i++) {
+            newListNode.setData(tempNode.getData());
+
+            tempNode = tempNode.getNext();
+            if (tempNode != null) {
+                newListNode.setNext(new Node<>());
+            }
+            newListNode = newListNode.getNext();
+        }
+        newList.count = this.getCount();
         return newList;
     }
 
     @Override
     public String toString() {
-        if (head == null) {
-            throw new NullPointerException("The list is void");
-        }
         StringBuilder sb = new StringBuilder();
-        Node<T> pointer = head;
+        Node<T> currentNode = head;
+
+        if (head == null) {
+            return null;
+        }
+
         sb.append("(");
-        sb.append(pointer.getData());
-        while (pointer.getNext() != null) {
-            pointer = pointer.getNext();
+        sb.append(currentNode.getData());
+        while (currentNode.getNext() != null) {
+            currentNode = currentNode.getNext();
             sb.append(", ");
-            sb.append(pointer.getData());
+            sb.append(currentNode.getData());
         }
         sb.append(")");
         return sb.toString();

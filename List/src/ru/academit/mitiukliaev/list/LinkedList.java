@@ -5,8 +5,8 @@ public class LinkedList<T> {
     private int count;
 
     public LinkedList() {
-        this.head = null;
-        count = 0;
+        this.head = new Node<>();
+        count = 1;
     }
 
     public LinkedList(T data) {
@@ -15,25 +15,22 @@ public class LinkedList<T> {
     }
 
     //поиск нужного элемента
-    private Node<T> setCurrentNode(int index) {
-        if (head != null) {
-            Node<T> currentNode = head;
-            int i = 0;
-            while (i < index) {
-                currentNode = currentNode.getNext();
-                ++i;
-            }
-            return currentNode;
-        }
-        this.head = new Node<T>();
+    private Node<T> getCurrentNode(int index) {
         Node<T> currentNode = head;
+        int i = 0;
+        while (i < index) {
+            currentNode = currentNode.getNext();
+            ++i;
+        }
         return currentNode;
     }
 
     //вставка элемента в начало
     public void insertValue(T value) {
         Node<T> newNode = new Node<>(value);
-        newNode.setNext(this.head);
+        if (this.head != null) {
+            newNode.setNext(this.head);
+        }
         head = newNode;
         ++count;
     }
@@ -45,7 +42,15 @@ public class LinkedList<T> {
 
     //получение значения первого элемента
     public T getHeadValue() {
+        if (head == null) {
+            throw new IllegalArgumentException("The list is empty");
+        }
         return head.getData();
+    }
+
+    //установка значения первого элемента
+    public void setHeadValue(T value) {
+        head.setData(value);
     }
 
     //получение значения по указанному индексу.
@@ -53,7 +58,7 @@ public class LinkedList<T> {
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return setCurrentNode(index).getData();
+        return getCurrentNode(index).getData();
     }
 
     //изменение значения по указанному индексу.
@@ -61,13 +66,13 @@ public class LinkedList<T> {
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return setCurrentNode(index).setData(value);
+        return getCurrentNode(index).setData(value);
     }
 
     //удаление элемента по индексу, пусть выдает значение элемента
     public T deleteIndex(int index) {
         if (head == null) {
-            throw new IllegalArgumentException("The list is void, nothing to delete");
+            throw new IllegalArgumentException("The list is empty, nothing to delete");
         }
         if (index > this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
@@ -79,9 +84,9 @@ public class LinkedList<T> {
             return tmp.getData();
         }
 
-        Node<T> currentNode = setCurrentNode(index - 1);
-        Node<T> tmp = currentNode.getNext();
-        currentNode.setNext(tmp.getNext());
+        Node<T> previousNode = getCurrentNode(index - 1);
+        Node<T> tmp = previousNode.getNext();
+        previousNode.setNext(tmp.getNext());
         --count;
         return tmp.getData();
     }
@@ -97,17 +102,17 @@ public class LinkedList<T> {
             return;
         }
 
-        Node<T> currentNode = setCurrentNode(index - 1);
+        Node<T> previousNode = getCurrentNode(index - 1);
         Node<T> newNode = new Node<>(value);
-        newNode.setNext(currentNode.getNext());
-        currentNode.setNext(newNode);
+        newNode.setNext(previousNode.getNext());
+        previousNode.setNext(newNode);
         ++count;
     }
 
     //удаление узла по значению, пусть выдает true, если элемент был удален
     public boolean deleteValue(T value) {
         if (head == null) {
-            throw new IllegalArgumentException("The list is void, nothing to delete");
+            return false;
         }
 
         if (head.getData().equals(value)) {
@@ -118,7 +123,9 @@ public class LinkedList<T> {
 
         Node<T> currentNode = head;
         while (currentNode.getNext() != null) {
-            if (currentNode.getNext().getData().equals(value)) {
+            boolean check = (value == null && currentNode.getNext().getData() == null);
+            check = check || currentNode.getNext().getData().equals(value);
+            if (check) {
                 currentNode.setNext(currentNode.getNext().getNext());
                 --count;
                 return true;
@@ -131,7 +138,7 @@ public class LinkedList<T> {
     //удаление первого элемента, пусть выдает значение элемента
     public T deleteHead() {
         if (head == null) {
-            throw new IllegalArgumentException("The list is void, nothing to delete");
+            throw new IllegalArgumentException("The list is empty, nothing to delete");
         }
         T tmp = head.getData();
         head = head.getNext();
@@ -141,27 +148,18 @@ public class LinkedList<T> {
 
     //разворот списка за линейное время
     public void reverse() {
-        if (head == null) {
+        if (head == null || head.getNext() == null) {
             return;
         }
+        Node<T> previous = head.getNext();
+        Node<T> current = previous.getNext();
 
-        Node<T> first = head;
-        Node<T> second = head.getNext();
-        if (second == null) {
-            return;
-        }
-        Node<T> third = second.getNext();
-
-        first.setNext(null);
-        second.setNext(first);
-
-        Node<T> current = third;
-        Node<T> previous = second;
+        head.setNext(null);
+        previous.setNext(head);
 
         while (current != null) {
             Node<T> next = current.getNext();
             current.setNext(previous);
-
             previous = current;
             current = next;
         }
@@ -171,41 +169,47 @@ public class LinkedList<T> {
     //копирование списка
     public LinkedList<T> copy() {
         LinkedList<T> newList = new LinkedList<>();
-        if (this.head == null) {
+        newList.count = this.getCount();
+        Node<T> newListNode = new Node<>();
+
+        if (this.head != null) {
+            newList.setHeadValue(this.head.getData());
+            if (this.head.getNext() != null) {
+                newList.head.setNext(newListNode);
+            }
+        } else {
             return newList;
         }
-        newList.insertIndexValue(0, this.head.getData());
-        Node<T> newListNode = new Node<>();
-        newList.head.setNext(newListNode);
-        Node<T> tempNode = this.head.getNext();
-        for (int i = 1; i < this.getCount(); i++) {
-            newListNode.setData(tempNode.getData());
 
+        Node<T> tempNode = this.head;
+        while (tempNode.getNext() != null) {
             tempNode = tempNode.getNext();
-            if (tempNode != null) {
-                newListNode.setNext(new Node<>());
-            }
+            newListNode.setData(tempNode.getData());
+            newListNode.setNext(new Node<>());
             newListNode = newListNode.getNext();
         }
-        newList.count = this.getCount();
+
         return newList;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        Node<T> currentNode = head;
-
         if (head == null) {
-            return null;
+            return "()";
         }
 
+        StringBuilder sb = new StringBuilder();
+        Node<T> currentNode = head;
         sb.append("(");
+        sb.append("Length = ");
+        sb.append(count);
+        sb.append(" | ");
         sb.append(currentNode.getData());
-        while (currentNode.getNext() != null) {
-            currentNode = currentNode.getNext();
+        currentNode = currentNode.getNext();
+        for (int i = 1; i < count; i++) {
             sb.append(", ");
             sb.append(currentNode.getData());
+            currentNode = currentNode.getNext();
         }
         sb.append(")");
         return sb.toString();

@@ -13,7 +13,7 @@ public class Node<T> {
         this.next = null;
     }
 
-    public Node(T data, Node next) {
+    public Node(T data, Node<T> next) {
         this.data = data;
         this.next = next;
     }
@@ -23,8 +23,7 @@ public class Node<T> {
     }
 
     public T setData(T data) {
-        T tmp;
-        tmp = this.data;
+        T tmp = this.data;
         this.data = data;
         return tmp;
     }
@@ -39,19 +38,20 @@ public class Node<T> {
 
     @Override
     public String toString() {
-        return data.toString();
+        String string = ((data == null) ? "" : data.toString());
+        return string;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
         if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
         Node tmpNode = (Node) o;
-        return tmpNode.getData() == this.getData() && tmpNode.getNext() == this.getNext();
+        return tmpNode.getData().equals(this.getData()) && tmpNode.getNext().equals(this.getNext());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Node<T> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((next == null) ? 0 : next.hashCode());
-        result = prime * result + data.hashCode();
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
         return result;
     }
 }

@@ -18,7 +18,7 @@ public class MyArrayList<T> implements List<T> {
 
         @Override
         public T next() {
-//Returns the next element in the iteration.
+            //Returns the next element in the iteration.
         }
     }
 
@@ -41,6 +41,11 @@ public class MyArrayList<T> implements List<T> {
     }
 
     @Override
+    public List<T> subList(int fromIndex, int toIndex) {
+        //    Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
+    }
+
+    @Override
     public Iterator<T> iterator() {
         return new MyArrayListIterator();
     }
@@ -51,8 +56,7 @@ public class MyArrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean add(int index, T e) {
-        return false;
+    public void add(int index, T e) {
     }
 
     @Override
@@ -134,11 +138,6 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-    }
-
-    @Override
-    public List<T> subList(int fromIndex, int toIndex) {
-        //    Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
     }
 
     @Override

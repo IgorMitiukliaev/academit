@@ -47,7 +47,7 @@ public class Vector {
 
     public double getCoordinate(int i) {
         if (i < 0 || (i >= this.getSize())) {
-            throw new IndexOutOfBoundsException("Index out of range");
+            throw new IndexOutOfBoundsException("Index " + i + " is out of range at " + this);
         }
         return this.coordinates[i];
     }

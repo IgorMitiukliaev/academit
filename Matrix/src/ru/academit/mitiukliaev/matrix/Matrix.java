@@ -192,14 +192,14 @@ public class Matrix {
     }
 
     private Matrix getMinor(int index) {
-        Matrix minor = new Matrix(this.rows);
         int size = this.rows.length;
-        // System.arraycopy(this.rows, index + 1, minor.rows, index, size - index - 1);
-
+        Matrix minor = new Matrix(this.rows);
+        System.arraycopy(minor.rows, index + 1, minor.rows, index, size - index - 1);
+/*
         for (int i = index; i < size - 1; i++) {
             minor.rows[i] = minor.rows[i + 1];
         }
-
+*/
         minor.setSize((size - 1), (size - 1));
         return minor;
     }

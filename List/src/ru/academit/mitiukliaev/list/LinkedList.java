@@ -1,12 +1,14 @@
 package ru.academit.mitiukliaev.list;
 
+import java.util.Objects;
+
 public class LinkedList<T> {
     private Node<T> head;
     private int count;
 
     public LinkedList() {
-        this.head = new Node<>();
-        count = 1;
+        this.head = null;
+        count = 0;
     }
 
     public LinkedList(T data) {
@@ -27,11 +29,7 @@ public class LinkedList<T> {
 
     //вставка элемента в начало
     public void insertValue(T value) {
-        Node<T> newNode = new Node<>(value);
-        if (this.head != null) {
-            newNode.setNext(this.head);
-        }
-        head = newNode;
+        head = new Node<>(value, this.head);
         ++count;
     }
 
@@ -50,12 +48,18 @@ public class LinkedList<T> {
 
     //установка значения первого элемента
     public void setHeadValue(T value) {
+        if (head == null) {
+            throw new IllegalArgumentException("The list is empty");
+        }
         head.setData(value);
     }
 
     //получение значения по указанному индексу.
     public T getIndexValue(int index) {
-        if (index > this.getCount() || index < 0) {
+        if (head == null) {
+            throw new IllegalArgumentException("The list is empty");
+        }
+        if (index >= this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
         return getCurrentNode(index).getData();
@@ -63,7 +67,7 @@ public class LinkedList<T> {
 
     //изменение значения по указанному индексу.
     public T setIndexValue(int index, T value) {
-        if (index > this.getCount() || index < 0) {
+        if (index >= this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
         return getCurrentNode(index).setData(value);
@@ -74,7 +78,7 @@ public class LinkedList<T> {
         if (head == null) {
             throw new IllegalArgumentException("The list is empty, nothing to delete");
         }
-        if (index > this.getCount() || index < 0) {
+        if (index >= this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
         if (index == 0) {
@@ -115,7 +119,7 @@ public class LinkedList<T> {
             return false;
         }
 
-        if (head.getData().equals(value)) {
+        if (Objects.equals(head.getData(), value)) {
             head = head.getNext();
             --count;
             return true;
@@ -170,23 +174,23 @@ public class LinkedList<T> {
     public LinkedList<T> copy() {
         LinkedList<T> newList = new LinkedList<>();
         newList.count = this.getCount();
-        Node<T> newListNode = new Node<>();
-
-        if (this.head != null) {
-            newList.setHeadValue(this.head.getData());
-            if (this.head.getNext() != null) {
-                newList.head.setNext(newListNode);
-            }
-        } else {
+        if (this.head == null) {
+            return newList;
+        }
+        Node<T> tempNode = this.head;
+        Node<T> newListNode = new Node<>(tempNode.getData());
+        newList.head = newListNode;
+        if (tempNode.getNext() == null) {
             return newList;
         }
 
-        Node<T> tempNode = this.head;
         while (tempNode.getNext() != null) {
-            tempNode = tempNode.getNext();
+            Node<T> newListNextNode = new Node<>(tempNode.getNext().getData());
             newListNode.setData(tempNode.getData());
-            newListNode.setNext(new Node<>());
+            newListNode.setNext(newListNextNode);
+
             newListNode = newListNode.getNext();
+            tempNode = tempNode.getNext();
         }
 
         return newList;

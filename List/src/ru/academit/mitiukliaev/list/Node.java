@@ -1,12 +1,10 @@
 package ru.academit.mitiukliaev.list;
 
+import java.util.Objects;
+
 public class Node<T> {
     private T data;
     private Node<T> next;
-
-    public Node() {
-        this.data = null;
-    }
 
     public Node(T data) {
         this.data = data;
@@ -38,13 +36,12 @@ public class Node<T> {
 
     @Override
     public String toString() {
-        String string = ((data == null) ? "" : data.toString());
-        return string;
+        return ((data == null) ? "" : data.toString());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (Objects.equals(this, o)) {
             return true;
         }
         if (o == null || o.getClass() != this.getClass()) {

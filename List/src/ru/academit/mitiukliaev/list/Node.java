@@ -1,7 +1,5 @@
 package ru.academit.mitiukliaev.list;
 
-import java.util.Objects;
-
 public class Node<T> {
     private T data;
     private Node<T> next;
@@ -41,7 +39,8 @@ public class Node<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (Objects.equals(this, o)) {
+        // В классе узла equals - сравнивать на равенство this надо через ==.
+        if (this == o) {
             return true;
         }
         if (o == null || o.getClass() != this.getClass()) {

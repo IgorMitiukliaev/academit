@@ -8,7 +8,7 @@ public class Main {
         int index;
 
         System.out.println(list);
-//        System.out.println(list.getIndexValue(0));
+
         System.out.println("list.getCount= " + list.getCount());
 
         System.out.println();
@@ -27,11 +27,12 @@ public class Main {
         System.out.println("null inserted at end " + list);
 
         index = 0;
-        list.setIndexValue(index, null);
+        list.set(index, null);
         System.out.println("element @" + index + " altered " + list);
-        list.deleteValue(null);
-
-        System.out.println("element @" + index + " deleted " + list);
+        System.out.println(list.deleteValue(null));
+        System.out.println(list.deleteValue(null));
+        System.out.println(list.deleteValue(null));
+        System.out.println("null deleted twice " + list);
         System.out.println("newList remains = " + newList);
         System.out.println();
 

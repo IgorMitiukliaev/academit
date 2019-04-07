@@ -17,7 +17,7 @@ public class LinkedList<T> {
     }
 
     //поиск нужного элемента
-    private Node<T> getCurrentNode(int index) {
+    private Node<T> getNode(int index) {
         Node<T> currentNode = head;
         int i = 0;
         while (i < index) {
@@ -41,7 +41,8 @@ public class LinkedList<T> {
     //получение значения первого элемента
     public T getHeadValue() {
         if (head == null) {
-            throw new IllegalArgumentException("The list is empty");
+// Thrown when an application attempts to use null in a case where an object is required, including accessing or modifying the field of a null object
+            throw new NullPointerException("The list is empty");
         }
         return head.getData();
     }
@@ -49,28 +50,25 @@ public class LinkedList<T> {
     //установка значения первого элемента
     public void setHeadValue(T value) {
         if (head == null) {
-            throw new IllegalArgumentException("The list is empty");
+            throw new NullPointerException("The list is empty");
         }
         head.setData(value);
     }
 
     //получение значения по указанному индексу.
-    public T getIndexValue(int index) {
-        if (head == null) {
-            throw new IllegalArgumentException("The list is empty");
-        }
+    public T get(int index) {
         if (index >= this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return getCurrentNode(index).getData();
+        return getNode(index).getData();
     }
 
     //изменение значения по указанному индексу.
-    public T setIndexValue(int index, T value) {
+    public T set(int index, T value) {
         if (index >= this.getCount() || index < 0) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of range, LinkedList length is " + this.getCount());
         }
-        return getCurrentNode(index).setData(value);
+        return getNode(index).setData(value);
     }
 
     //удаление элемента по индексу, пусть выдает значение элемента
@@ -88,7 +86,7 @@ public class LinkedList<T> {
             return tmp.getData();
         }
 
-        Node<T> previousNode = getCurrentNode(index - 1);
+        Node<T> previousNode = getNode(index - 1);
         Node<T> tmp = previousNode.getNext();
         previousNode.setNext(tmp.getNext());
         --count;
@@ -106,7 +104,7 @@ public class LinkedList<T> {
             return;
         }
 
-        Node<T> previousNode = getCurrentNode(index - 1);
+        Node<T> previousNode = getNode(index - 1);
         Node<T> newNode = new Node<>(value);
         newNode.setNext(previousNode.getNext());
         previousNode.setNext(newNode);
@@ -126,11 +124,11 @@ public class LinkedList<T> {
         }
 
         Node<T> currentNode = head;
-        while (currentNode.getNext() != null) {
-            boolean check = (value == null && currentNode.getNext().getData() == null);
-            check = check || currentNode.getNext().getData().equals(value);
+        while (!Objects.equals(currentNode.getNext(), null)) {
+            //    boolean check = (value == null && currentNode.getNext().getData() == null) || currentNode.getNext().getData().equals(value);
+            boolean check = Objects.equals(value, currentNode.getNext().getData());
             if (check) {
-                currentNode.setNext(currentNode.getNext().getNext());
+                currentNode.setNext(currentNode.getNext() == null ? null : currentNode.getNext().getNext());
                 --count;
                 return true;
             }
@@ -177,6 +175,7 @@ public class LinkedList<T> {
         if (this.head == null) {
             return newList;
         }
+
         Node<T> tempNode = this.head;
         Node<T> newListNode = new Node<>(tempNode.getData());
         newList.head = newListNode;
@@ -186,13 +185,10 @@ public class LinkedList<T> {
 
         while (tempNode.getNext() != null) {
             Node<T> newListNextNode = new Node<>(tempNode.getNext().getData());
-            newListNode.setData(tempNode.getData());
             newListNode.setNext(newListNextNode);
-
             newListNode = newListNode.getNext();
             tempNode = tempNode.getNext();
         }
-
         return newList;
     }
 

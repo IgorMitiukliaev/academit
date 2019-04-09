@@ -124,11 +124,9 @@ public class LinkedList<T> {
         }
 
         Node<T> currentNode = head;
-        while (!Objects.equals(currentNode.getNext(), null)) {
-            //    boolean check = (value == null && currentNode.getNext().getData() == null) || currentNode.getNext().getData().equals(value);
-            boolean check = Objects.equals(value, currentNode.getNext().getData());
-            if (check) {
-                currentNode.setNext(currentNode.getNext() == null ? null : currentNode.getNext().getNext());
+        while (currentNode.getNext() != null) {
+            if (Objects.equals(value, currentNode.getNext().getData())) {
+                currentNode.setNext(currentNode.getNext().getNext());
                 --count;
                 return true;
             }

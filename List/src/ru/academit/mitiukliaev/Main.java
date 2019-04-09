@@ -26,10 +26,10 @@ public class Main {
         list.insertIndexValue(list.getCount(), null);
         System.out.println("null inserted at end " + list);
 
-        index = 0;
+        index = 3;
         list.set(index, null);
         System.out.println("element @" + index + " altered " + list);
-        System.out.println(list.deleteValue(null));
+        System.out.println(list.deleteValue("111"));
         System.out.println(list.deleteValue(null));
         System.out.println(list.deleteValue(null));
         System.out.println("null deleted twice " + list);

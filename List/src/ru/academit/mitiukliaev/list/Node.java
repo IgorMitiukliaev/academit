@@ -1,5 +1,7 @@
 package ru.academit.mitiukliaev.list;
 
+import java.util.Objects;
+
 public class Node<T> {
     private T data;
     private Node<T> next;
@@ -39,7 +41,6 @@ public class Node<T> {
 
     @Override
     public boolean equals(Object o) {
-        // В классе узла equals - сравнивать на равенство this надо через ==.
         if (this == o) {
             return true;
         }
@@ -47,7 +48,7 @@ public class Node<T> {
             return false;
         }
         Node tmpNode = (Node) o;
-        return tmpNode.getData().equals(this.getData()) && tmpNode.getNext().equals(this.getNext());
+        return Objects.equals(this.getData(), tmpNode.getData()) && Objects.equals(this.getNext(), tmpNode.getNext());
     }
 
     @Override

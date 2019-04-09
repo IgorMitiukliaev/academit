@@ -5,9 +5,7 @@ import java.util.*;
 public class MyArrayList<E> implements List<E> {
     private E[] items;
     private int size;
-    private final E[] EMPTY_ITEMS = (E[]) new Object[]{};
-    int modCount;
-
+    private int modCount;
 
     //done class Iterator
     private class MyArrayListIterator implements Iterator<E> {
@@ -33,27 +31,25 @@ public class MyArrayList<E> implements List<E> {
     }
 
     //done
+    @SuppressWarnings("unchecked")
     public MyArrayList() {
         items = (E[]) new Object[10];
-        size = 10;
     }
 
     // done
-    public MyArrayList(int size) {
-        if (size > 0) {
-            this.items = (E[]) new Object[size];
-            this.size = size;
-        } else if (size == 0) {
-            this.items = EMPTY_ITEMS;
+    @SuppressWarnings("unchecked")
+    public MyArrayList(int capacity) {
+        if (capacity == 0) {
+            throw new IllegalArgumentException("Illegal capacity: " + capacity);
         } else {
-            throw new IllegalArgumentException("Illegal size: " + size);
+            this.items = (E[]) new Object[capacity];
         }
     }
 
     // done
+    @SuppressWarnings("unchecked")
     public MyArrayList(Collection<? extends E> c) {
         items = (E[]) c.toArray();
-        size = items.length;
     }
 
     // done
@@ -101,14 +97,17 @@ public class MyArrayList<E> implements List<E> {
     public void add(int index, E element) {
         // Inserts the specified element at the specified position in this list (optional operation).
         // Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
-        if (index >= size) {
+        if (index > size) {
             throw new IndexOutOfBoundsException("index " + index + " is out of range, size = " + size);
         }
         if (size == items.length) {
             this.ensureCapacity(2 * size);
         }
-        System.arraycopy(this.items, index, this.items, index + 1, size - index - 1);
-        this.items[size] = element;
+        if (index < size) {
+            System.arraycopy(this.items, index, this.items, index + 1, size - index);
+        }
+        this.items[index] = element;
+
         ++size;
         ++modCount;
     }
@@ -123,12 +122,15 @@ public class MyArrayList<E> implements List<E> {
         if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-        return Arrays.equals((E[]) o, items);
+        return (Objects.equals(o, items));
     }
 
     // done
     @Override
     public E get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("index " + index + " is out of range, size = " + size);
+        }
 //   Returns the element at the specified position in this list.
         return this.items[index];
     }
@@ -149,7 +151,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         // Returns the index of the last occurrence of the specified element in this list, or - 1 if this list does not contain the element.
-        for (int i = size; i > 0; --i) {
+        for (int i = size - 1; i >= 0; i--) {
             if (Objects.equals(o, items[i])) {
                 return i;
             }
@@ -160,9 +162,11 @@ public class MyArrayList<E> implements List<E> {
     // done
     @Override
     public E set(int index, E element) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, Size: " + size);
+        }
         E tmp = this.items[index];
         this.items[index] = element;
-        ++modCount;
         return tmp;
     }
 
@@ -170,12 +174,11 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int hashCode() {
 //  Returns the hash code value for this list.
-        /*
         int hashCode = 1;
         for (E e : items) {
             hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
-        }*/
-        return Arrays.hashCode(items);
+        }
+        return hashCode;
     }
 
     // done
@@ -186,64 +189,48 @@ public class MyArrayList<E> implements List<E> {
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, Size: " + size);
         }
-
-        E[] tmp = (E[]) c.toArray();
-
-        int collectionLength = tmp.length;
+        int collectionLength = c.size();
         if (collectionLength == 0) {
             return false;
         }
-
-        if (collectionLength > (items.length - size)) {
-            ensureCapacity(size + collectionLength);
-        }
+        ensureCapacity(this.items.length + collectionLength);
 
         int numMoved = size - index;
         if (numMoved > 0) {
             System.arraycopy(items, index, items, index + collectionLength, numMoved);
         }
-        System.arraycopy(tmp, 0, items, index, collectionLength);
-        size += collectionLength;
-        modCount++;
+        for (E e : c) {
+            this.add(e);
+        }
         return true;
     }
 
     // done
     @Override
     public boolean addAll(Collection<? extends E> c) {
-
-        E[] tmp = (E[]) c.toArray();
-        int collectionLength = tmp.length;
-        if (collectionLength == 0) {
-            return false;
-        }
-        if (collectionLength > (this.items.length - size)) {
-            this.ensureCapacity(size + collectionLength);
-        }
-        System.arraycopy(tmp, 0, items, size, collectionLength);
-        size += collectionLength;
-        modCount++;
-        return true;
+        return addAll(size, c);
     }
 
     // done
     @Override
     public void clear() {
-        items = EMPTY_ITEMS;
+        Arrays.fill(items, null);
         ++modCount;
-        //    Arrays.fill(items, null);
+        size = 0;
     }
 
     // done
     @Override
     public E remove(int index) {
-        if (index >= size) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException("index " + index + " is out of range, size() = " + size);
         }
         E tmp = this.items[index];
-        System.arraycopy(this.items, index + 1, this.items, index, size - index - 2);
-        this.items[size] = null;
-        --this.size;
+        this.items[index] = null;
+        if (index < size) {
+            System.arraycopy(this.items, index + 1, this.items, index, size - index - 1);
+        }
+        --size;
         ++modCount;
         return tmp;
     }
@@ -256,12 +243,11 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
         remove(index);
-        ++modCount;
         return true;
     }
 
     // done
-    public boolean batchRemove(Collection<?> c, boolean argument) {
+    private boolean batchRemove(Collection<?> c, boolean argument) {
         int n = 0;
         int i;
         for (i = 0; i < size; i++) {
@@ -322,20 +308,19 @@ public class MyArrayList<E> implements List<E> {
 
     // done
     @Override
-    public <E> E[] toArray(E[] a) {
-        if (Objects.equals(a, null)) {
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(T[] a) {
+        if (a == null) {
             throw new NullPointerException("The specified array is null");
         }
         // Returns an array containing all of the elements in this list in proper sequence
         // (from first to last element); the runtime type of the returned array is that of the specified array.
         // If the list fits in the specified array, it is returned therein.
         // Otherwise, a new array is allocated with the runtime type of the specified array and the size of this list.
-        if (a.length <= size)
-            return (E[]) Arrays.copyOf(items, size, a.getClass());
-        System.arraycopy(items, 0, a, 0, size);
-        if (a.length > size)
-            a[size] = null;
-        return a;
+        if (a.length <= size) {
+            return (T[]) Arrays.copyOf(items, size, a.getClass());
+        }
+        return a = (T[]) Arrays.copyOf(items, size, a.getClass());
     }
 
     // done
@@ -347,16 +332,23 @@ public class MyArrayList<E> implements List<E> {
     // done
     @Override
     public boolean isEmpty() {
+        /*
         for (E e : items) {
             if (!(e.equals(null))) {
                 return false;
             }
-        }
-        return true;
+        }*/
+        return (size == 0);
+    }
+
+    public void trimToSize() {
+        this.items = Arrays.copyOf(this.items, size);
+        modCount++;
     }
 
     //done
     public void ensureCapacity(int size) {
+        modCount++;
         if (size > this.size) {
             this.items = Arrays.copyOf(this.items, size);
         }
@@ -364,9 +356,24 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public String toString() {
-        return Arrays.toString(toArray());
-    }
+        if (size == 0) {
+//            throw new IllegalArgumentException("The list is empty");
+            return "(empty)";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("( ");
+        sb.append("Size = ");
+        sb.append(size);
+        sb.append(" | ");
 
+        for (int i = 0; i < size - 1; i++) {
+            sb.append(items[i]);
+            sb.append(", ");
+        }
+        sb.append(items[size - 1]);
+        sb.append(" )");
+        return sb.toString();
+    }
 }
 
 

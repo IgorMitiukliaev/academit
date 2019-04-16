@@ -7,7 +7,7 @@ public class MyHashTable<E> implements Collection<E> {
     private int size;
     private int modCount;
 
-    private class MyIterator<E> implements Iterator<E> {
+    private class MyIterator implements Iterator<E> {
         private int currentNodeNumber = 0;
         private int currentArrayIndex = 0;
         private int currentIndex = -1;
@@ -19,7 +19,6 @@ public class MyHashTable<E> implements Collection<E> {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public E next() {
             if (!this.hasNext()) {
                 throw new NoSuchElementException("End of collection reached");
@@ -32,17 +31,23 @@ public class MyHashTable<E> implements Collection<E> {
                 currentNodeNumber = 0;
             }
             ++currentIndex;
-            return (E) items[currentArrayIndex].get(currentNodeNumber++);
+            int prevNodeNumber = currentNodeNumber++;
+            return items[currentArrayIndex].get(prevNodeNumber);
         }
 
+        @Override
         public void remove() {
+            --size;
+            --currentIndex;
+            currentNodeNumber--;
+            items[currentArrayIndex].remove(currentNodeNumber);
         }
-
     }
+
 
     @Override
     public Iterator<E> iterator() {
-        return new MyIterator<>();
+        return new MyIterator();
     }
 
     @SuppressWarnings("unchecked")
@@ -58,8 +63,8 @@ public class MyHashTable<E> implements Collection<E> {
         items = new ArrayList[capacity];
     }
 
-    private int getKey(E e) {
-        return Math.abs(e.hashCode() % items.length);
+    private int getKey(Object e) {
+        return (e == null ? 0 : Math.abs(e.hashCode() % items.length));
     }
 
     @Override
@@ -73,18 +78,11 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean contains(Object o) {
-        E tmp = (E) o;
-        if (items[getKey(tmp)] == null) {
+        if (items[getKey(o)] == null) {
             return false;
         }
-        for (E e : items[getKey(tmp)]) {
-            if (tmp.equals(e)) {
-                return true;
-            }
-        }
-        return false;
+        return items[getKey(o)].contains(o);
     }
 
     @Override
@@ -108,10 +106,10 @@ public class MyHashTable<E> implements Collection<E> {
         if (a == null) {
             throw new NullPointerException("The specified array is null");
         }
-        if (a.length <= size) {
+        if (a.length < size) {
             return (T[]) Arrays.copyOf(items, size, a.getClass());
         }
-        System.arraycopy(items, 0, a, 0, size);
+        System.arraycopy((T[]) items, 0, a, 0, size);
         if (a.length > size) {
             a[size] = null;
         }
@@ -120,7 +118,7 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean add(E e) {
-        int key = getKey(e);
+        int key = (e == null ? 0 : getKey(e));
         if (items[key] == null) {
             items[key] = new ArrayList<>(1);
         }
@@ -136,44 +134,51 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
         for (E e : c) {
-            int key = getKey(e);
-            if (items[key] == null) {
-                items[key] = new ArrayList<>(1);
-            }
-            ++size;
-            items[key].add(e);
+            items[getKey(e)].add(e);
         }
-        ++modCount;
         return true;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean remove(Object o) {
-        E tmp = (E) o;
-        int key = getKey(tmp);
-        //if (items[key] != null){
-        // System.out.println("Object is not an instance of " + items[0].getClass());}
-        --size;
-        ++modCount;
-        return (items[key] != null && items[key].remove(tmp));
-    }
-
-    //TODO
-    private boolean batchRemove(Collection<?> c, boolean argument) {
+        int key = getKey(o);
+        if (items[key] != null && items[key].remove(o)) {
+            --size;
+            ++modCount;
+            return true;
+        }
         return false;
     }
 
-    //TODO
     @Override
     public boolean removeAll(Collection<?> c) {
-        return batchRemove(c, false);
+        int key;
+        boolean hasChanged = false;
+        for (Object e : c) {
+            key = getKey(e);
+            if (items[key] != null) {
+                if (items[key].remove(e)) {
+                    --size;
+                    ++modCount;
+                    hasChanged = true;
+                }
+            }
+        }
+        return hasChanged;
     }
 
-    //TODO
     @Override
     public boolean retainAll(Collection<?> c) {
-        return batchRemove(c, true);
+        boolean hasChanged = false;
+        Iterator<E> e = iterator();
+        while (e.hasNext()) {
+            E o = e.next();
+            if (!(c.contains(o))) {
+                e.remove();
+                hasChanged = true;
+            }
+        }
+        return hasChanged;
     }
 
     @Override
@@ -184,7 +189,7 @@ public class MyHashTable<E> implements Collection<E> {
 
     public String toString() {
         if (size == 0) {
-            throw new IllegalArgumentException("The list is empty");
+            return ("( Size = 0 )");
         }
         StringBuilder sb = new StringBuilder();
         sb.append("( ");

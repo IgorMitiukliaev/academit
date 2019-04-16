@@ -44,8 +44,10 @@ public class MyArrayList<E> implements List<E> {
 
     @SuppressWarnings("unchecked")
     public MyArrayList(Collection<? extends E> c) {
-        this.ensureCapacity(items.length + c.size());
-        items = (E[]) c.toArray();
+        size = c.size();
+        items = (E[]) new Object[size + 10];
+        System.arraycopy((E[]) c.toArray(), 0, items, 0, size);
+
     }
 
     @Override
@@ -87,7 +89,7 @@ public class MyArrayList<E> implements List<E> {
     public void add(int index, E element) {
         // Inserts the specified element at the specified position in this list (optional operation).
         // Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
-        if (index > size) {
+        if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("index " + index + " is out of range, size = " + size);
         }
         if (size == items.length) {
@@ -103,21 +105,22 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || o.getClass() != this.getClass()) {
+        if (!(o instanceof List)) {
             return false;
         }
-        E[] tmp = (E[]) o;
-        for (int i = 0; i < size; i++) {
-            if (!tmp[i].equals(items[i])) {
+        Iterator<E> e1 = iterator();
+        Iterator e2 = ((List) o).iterator();
+        while (e1.hasNext() && e2.hasNext()) {
+            E o1 = e1.next();
+            Object o2 = e2.next();
+            if (!(Objects.equals(o1, o2)))
                 return false;
-            }
         }
-        return true;
+        return !(e1.hasNext() || e2.hasNext());
     }
 
     @Override
@@ -188,8 +191,10 @@ public class MyArrayList<E> implements List<E> {
             System.arraycopy(items, index, items, index + collectionLength, numMoved);
         }
         for (E e : c) {
-            this.add(e);
+            this.items[size] = e;
+            ++size;
         }
+        ++modCount;
         return true;
     }
 
@@ -201,8 +206,10 @@ public class MyArrayList<E> implements List<E> {
         }
         ensureCapacity(size + collectionLength);
         for (E e : c) {
-            this.add(e);
+            this.items[size] = e;
+            ++size;
         }
+        ++modCount;
         return true;
     }
 
@@ -332,9 +339,9 @@ public class MyArrayList<E> implements List<E> {
         }
     }
 
-    public void ensureCapacity(int size) {
-        if (size > this.size) {
-            this.items = Arrays.copyOf(this.items, size);
+    public void ensureCapacity(int capacity) {
+        if (capacity > items.length) {
+            this.items = Arrays.copyOf(this.items, capacity);
         }
     }
 

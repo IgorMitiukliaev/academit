@@ -30,7 +30,7 @@ public class Main {
                 .filter(person -> person.getAge() < 18)
                 .mapToDouble(Person::getAge)
                 .average();
-        System.out.println((average == OptionalDouble.empty() ? "Nobody is under 18" : average));
+        System.out.println((average.isPresent() ? "Nobody is under 18" : average));
 
         //получить Map, где ключи - имена, а значения - средний возраст
         Map<String, Double> personsByName = list.stream()
@@ -40,7 +40,7 @@ public class Main {
         //получить людей в возрасте от 20 до 45, вывести в консоль их имена в порядке убывания возраста
         list.stream()
                 .filter(p -> p.getAge() <= 45 && p.getAge() >= 20)
-                .sorted((p1, p2) -> (int) (p2.getAge() - p1.getAge()))
+                .sorted((p1, p2) -> Double.compare(p2.getAge(), p1.getAge()))
                 .forEach(p -> System.out.println(p.getName()));
     }
 

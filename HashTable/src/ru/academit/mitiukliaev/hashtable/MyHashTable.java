@@ -1,5 +1,6 @@
 package ru.academit.mitiukliaev.hashtable;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class MyHashTable<E> implements Collection<E> {
@@ -37,6 +38,8 @@ public class MyHashTable<E> implements Collection<E> {
 
         @Override
         public void remove() {
+            ++modCount;
+            initModCount = modCount;
             --size;
             --currentIndex;
             currentNodeNumber--;
@@ -79,10 +82,8 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        if (items[getKey(o)] == null) {
-            return false;
-        }
-        return items[getKey(o)].contains(o);
+        int key = getKey(o);
+        return (items[key] != null && items[key].contains(o));
     }
 
     @Override
@@ -96,8 +97,16 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        return Arrays.copyOf(items, size);
+        Object[] tmp = new Object[size];
+        int i = 0;
+        for (ArrayList<E> e : items) {
+            int addSize = e.size();
+            System.arraycopy(e.toArray(tmp), 0, tmp, i, addSize);
+            i += addSize;
+        }
+        return tmp;
     }
 
     @Override
@@ -107,9 +116,9 @@ public class MyHashTable<E> implements Collection<E> {
             throw new NullPointerException("The specified array is null");
         }
         if (a.length < size) {
-            return (T[]) Arrays.copyOf(items, size, a.getClass());
+            return (T[]) Arrays.copyOf(this.toArray(), size, a.getClass());
         }
-        System.arraycopy((T[]) items, 0, a, 0, size);
+        System.arraycopy((T[]) this.toArray(), 0, a, 0, size);
         if (a.length > size) {
             a[size] = null;
         }
@@ -118,7 +127,7 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean add(E e) {
-        int key = (e == null ? 0 : getKey(e));
+        int key = getKey(e);
         if (items[key] == null) {
             items[key] = new ArrayList<>(1);
         }
@@ -134,7 +143,7 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
         for (E e : c) {
-            items[getKey(e)].add(e);
+            this.add(e);
         }
         return true;
     }
@@ -152,16 +161,10 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        int key;
         boolean hasChanged = false;
         for (Object e : c) {
-            key = getKey(e);
-            if (items[key] != null) {
-                if (items[key].remove(e)) {
-                    --size;
-                    ++modCount;
-                    hasChanged = true;
-                }
+            while (this.remove(e)) {
+                hasChanged = true;
             }
         }
         return hasChanged;
@@ -173,7 +176,7 @@ public class MyHashTable<E> implements Collection<E> {
         Iterator<E> e = iterator();
         while (e.hasNext()) {
             E o = e.next();
-            if (!(c.contains(o))) {
+            if (!c.contains(o)) {
                 e.remove();
                 hasChanged = true;
             }
@@ -185,6 +188,7 @@ public class MyHashTable<E> implements Collection<E> {
     public void clear() {
         Arrays.fill(items, null);
         size = 0;
+        ++modCount;
     }
 
     public String toString() {

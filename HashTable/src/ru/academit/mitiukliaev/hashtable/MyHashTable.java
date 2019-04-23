@@ -1,6 +1,5 @@
 package ru.academit.mitiukliaev.hashtable;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class MyHashTable<E> implements Collection<E> {
@@ -32,7 +31,8 @@ public class MyHashTable<E> implements Collection<E> {
                 currentNodeNumber = 0;
             }
             ++currentIndex;
-            int prevNodeNumber = currentNodeNumber++;
+            int prevNodeNumber = currentNodeNumber;
+            ++currentNodeNumber;
             return items[currentArrayIndex].get(prevNodeNumber);
         }
 
@@ -46,7 +46,6 @@ public class MyHashTable<E> implements Collection<E> {
             items[currentArrayIndex].remove(currentNodeNumber);
         }
     }
-
 
     @Override
     public Iterator<E> iterator() {

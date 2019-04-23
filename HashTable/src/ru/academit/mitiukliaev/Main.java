@@ -7,12 +7,8 @@ import java.util.LinkedList;
 
 public class Main {
     public static void main(String[] args) {
-
         MyHashTable<String> myTable = new MyHashTable<>(16);
-        for (int i = 0; i < 20; i++) {
-            /*if (i % 3 == 0) {
-                myTable.add(null);
-            }*/
+        for (int i = 2; i < 20; i++) {
             myTable.add(Integer.toString(i));
         }
 

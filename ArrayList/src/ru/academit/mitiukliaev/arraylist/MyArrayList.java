@@ -117,8 +117,9 @@ public class MyArrayList<E> implements List<E> {
         while (e1.hasNext() && e2.hasNext()) {
             E o1 = e1.next();
             Object o2 = e2.next();
-            if (!(Objects.equals(o1, o2)))
+            if (!(Objects.equals(o1, o2))) {
                 return false;
+            }
         }
         return !(e1.hasNext() || e2.hasNext());
     }
@@ -313,10 +314,10 @@ public class MyArrayList<E> implements List<E> {
         // Otherwise, a new array is allocated with the runtime type of the specified array and the size of this list.
         // If the list fits in the specified array with room to spare (i.e., the array has more elements than the list),
         // the element in the array immediately following the end of the collection is set to null.
-        if (a.length <= size) {
+        if (a.length < size) {
             return (T[]) Arrays.copyOf(items, size, a.getClass());
         }
-        System.arraycopy(items, 0, a, 0, size);
+        System.arraycopy((T[]) items, 0, a, 0, size);
         if (a.length > size) {
             a[size] = null;
         }

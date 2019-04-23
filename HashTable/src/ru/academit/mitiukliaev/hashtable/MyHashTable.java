@@ -97,7 +97,6 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Object[] toArray() {
         Object[] tmp = new Object[size];
         int i = 0;

@@ -45,9 +45,12 @@ public class MyArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     public MyArrayList(Collection<? extends E> c) {
         size = c.size();
-        items = (E[]) new Object[size + 10];
-        System.arraycopy((E[]) c.toArray(), 0, items, 0, size);
-
+        items = (E[]) new Object[c.size() + 10];
+        int i = 0;
+        for (E e : c) {
+            items[i] = e;
+            ++i;
+        }
     }
 
     @Override
@@ -105,23 +108,24 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof List)) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
         Iterator<E> e1 = iterator();
-        Iterator e2 = ((List) o).iterator();
+        Iterator e2 = ((List<E>) o).iterator();
         while (e1.hasNext() && e2.hasNext()) {
             E o1 = e1.next();
             Object o2 = e2.next();
-            if (!(Objects.equals(o1, o2))) {
+            if (!Objects.equals(o1, o2)) {
                 return false;
             }
         }
-        return !(e1.hasNext() || e2.hasNext());
+        return !e1.hasNext() && !e2.hasNext();
     }
 
     @Override
@@ -181,20 +185,21 @@ public class MyArrayList<E> implements List<E> {
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, Size: " + size);
         }
+        int initialSize = size;
         int collectionLength = c.size();
         if (collectionLength == 0) {
             return false;
         }
-        ensureCapacity(size + collectionLength);
+        ensureCapacity(initialSize + collectionLength);
 
-        int numMoved = size - index;
+        int numMoved = initialSize - index;
         if (numMoved > 0) {
             System.arraycopy(items, index, items, index + collectionLength, numMoved);
         }
         for (E e : c) {
-            this.items[size] = e;
-            ++size;
+            this.items[initialSize] = e;
         }
+        size += collectionLength;
         ++modCount;
         return true;
     }
@@ -205,11 +210,12 @@ public class MyArrayList<E> implements List<E> {
         if (collectionLength == 0) {
             return false;
         }
-        ensureCapacity(size + collectionLength);
+        int initialSize = size;
+        ensureCapacity(initialSize + collectionLength);
         for (E e : c) {
-            this.items[size] = e;
-            ++size;
+            this.items[initialSize] = e;
         }
+        size += collectionLength;
         ++modCount;
         return true;
     }
@@ -308,16 +314,10 @@ public class MyArrayList<E> implements List<E> {
         if (a == null) {
             throw new NullPointerException("The specified array is null");
         }
-        // Returns an array containing all of the elements in this list in proper sequence
-        // (from first to last element); the runtime type of the returned array is that of the specified array.
-        // If the list fits in the specified array, it is returned therein.
-        // Otherwise, a new array is allocated with the runtime type of the specified array and the size of this list.
-        // If the list fits in the specified array with room to spare (i.e., the array has more elements than the list),
-        // the element in the array immediately following the end of the collection is set to null.
         if (a.length < size) {
             return (T[]) Arrays.copyOf(items, size, a.getClass());
         }
-        System.arraycopy((T[]) items, 0, a, 0, size);
+        System.arraycopy(items, 0, a, 0, size);
         if (a.length > size) {
             a[size] = null;
         }

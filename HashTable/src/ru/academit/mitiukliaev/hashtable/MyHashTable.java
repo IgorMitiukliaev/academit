@@ -99,10 +99,9 @@ public class MyHashTable<E> implements Collection<E> {
     public Object[] toArray() {
         Object[] tmp = new Object[size];
         int i = 0;
-        for (ArrayList<E> e : items) {
-            int addSize = e.size();
-            System.arraycopy(e.toArray(tmp), 0, tmp, i, addSize);
-            i += addSize;
+        for (E e : this) {
+            tmp[i] = e;
+            ++i;
         }
         return tmp;
     }
@@ -207,5 +206,4 @@ public class MyHashTable<E> implements Collection<E> {
         sb.append(" )");
         return sb.toString();
     }
-
 }
